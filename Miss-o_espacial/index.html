@@ -27,7 +27,7 @@ body {
   display: grid;
   place-items: center;
   padding: 18px;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 .game-shell {
@@ -40,6 +40,48 @@ body {
 .game-wrap {
   position: relative;
   width: min(96vw, 1420px);
+  max-width: 100%;
+}
+
+.orientation-overlay {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(2, 7, 24, 0.9);
+  z-index: 20;
+  text-align: center;
+}
+
+.orientation-box {
+  display: grid;
+  gap: 12px;
+  justify-items: center;
+  padding: 26px 32px;
+  border: 2px solid #32d1ff;
+  border-radius: 18px;
+  background: rgba(12, 18, 44, 0.9);
+  box-shadow: 0 0 28px rgba(50, 209, 255, 0.25);
+}
+
+.orientation-icon {
+  font-size: 44px;
+}
+
+.orientation-text {
+  color: #dff9ff;
+  font-size: clamp(17px, 3vw, 28px);
+  line-height: 1.3;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.orientation-subtext {
+  color: #8edcff;
+  font-size: clamp(12px, 2vw, 16px);
 }
 
 canvas {
@@ -118,6 +160,25 @@ canvas {
   .help { padding: 0 8px 8px; gap: 8px 14px; }
 }
 
+@media (orientation: portrait) and (max-width: 960px) {
+  body {
+    overflow: hidden;
+    padding: 0;
+  }
+  .game-shell {
+    display: none;
+  }
+  .orientation-overlay {
+    display: flex;
+  }
+}
+
+@media (orientation: landscape) {
+  .orientation-overlay {
+    display: none !important;
+  }
+}
+
 @media (hover: none), (pointer: coarse) {
   .touch-controls { display: flex; }
 }
@@ -129,6 +190,14 @@ canvas {
   </style>
 </head>
 <body>
+  <div class="orientation-overlay" aria-live="polite">
+    <div class="orientation-box">
+      <div class="orientation-icon">📱↔️</div>
+      <div class="orientation-text">Gire o celular para a horizontal</div>
+      <div class="orientation-subtext">A tela do jogo foi otimizada para landscape mobile.</div>
+    </div>
+  </div>
+
   <main class="game-shell">
     <div class="game-wrap">
       <canvas id="game" width="960" height="540" aria-label="Jogo de plataforma Missão Espacial"></canvas>
