@@ -11,26 +11,42 @@
     --pink:#f449a6; --pink2:#ff88cf; --purple:#5b1b75; --cream:#fff2d7;
   }
   *{box-sizing:border-box}
-  html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#160d2b;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace}
-  body{display:grid;place-items:center}
-  #wrap{position:relative;width:100vw;height:100vh;overflow:hidden;background:#66b4ff}
-  canvas{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;image-rendering:crisp-edges;touch-action:none}
-  .topButtons{position:absolute;top:14px;right:18px;z-index:12;display:flex;gap:10px}
+  html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#160d2b;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;-webkit-tap-highlight-color:transparent;overscroll-behavior:none}
+  body{display:grid;place-items:center;min-height:100dvh}
+  #wrap{position:relative;width:100vw;height:100dvh;overflow:hidden;background:#66b4ff;max-width:100%;max-height:100%}
+  canvas{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;image-rendering:crisp-edges;touch-action:none;-webkit-user-select:none;user-select:none}
+  .topButtons{position:absolute;top:max(14px,env(safe-area-inset-top));right:max(18px,env(safe-area-inset-right));z-index:12;display:flex;gap:10px}
   .uiBtn{width:56px;height:56px;border:4px solid #46145e;border-radius:16px;background:linear-gradient(#a651bd,#703289);box-shadow:0 4px 0 #2e0c40,inset 0 0 0 3px #d995ea;color:white;font-size:26px;font-weight:900;display:grid;place-items:center;cursor:pointer;user-select:none}
   .uiBtn:active{transform:translateY(3px);box-shadow:0 1px 0 #2e0c40,inset 0 0 0 3px #d995ea}
   #overlay{position:absolute;inset:0;z-index:20;display:grid;place-items:center;background:rgba(34,11,58,.55);backdrop-filter:blur(2px)}
   .panel{width:min(700px,92vw);padding:30px 34px;border:5px solid #4b155f;border-radius:28px;background:linear-gradient(#ffc4ea,#f38fd1);box-shadow:0 10px 0 #2d0f43,0 0 0 6px #f7d5ff inset;text-align:center;color:#3d1252}
   .panel h1{margin:0 0 8px;font-size:clamp(32px,6vw,58px);letter-spacing:2px;text-shadow:3px 3px 0 #fff}
   .panel p{font:700 16px/1.5 system-ui,sans-serif;margin:8px 0 18px}
-  .startBtn{border:4px solid #6b1d7b;background:linear-gradient(#fff069,#f4b51d);border-radius:18px;padding:14px 26px;font:900 22px ui-monospace,monospace;color:#572052;box-shadow:0 5px 0 #9a5a08;cursor:pointer}
+  .startBtn{border:4px solid #6b1d7b;background:linear-gradient(#fff069,#f4b51d);border-radius:18px;padding:14px 26px;font:900 22px ui-monospace,monospace;color:#572052;box-shadow:0 5px 0 #9a5a08;cursor:pointer;max-width:100%}
   .keys{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:18px}
   .key{background:#fff7ff;border:2px solid #824b95;border-radius:10px;padding:7px 10px;font:800 13px system-ui,sans-serif}
   #touch{position:absolute;inset:0;z-index:11;pointer-events:none;display:none}
-  .touchGroup{position:absolute;bottom:20px;display:flex;gap:12px;pointer-events:auto}
-  .touchLeft{left:18px}.touchRight{right:18px}
-  .touchBtn{width:72px;height:72px;border:3px solid rgba(64,14,82,.9);border-radius:50%;background:rgba(124,55,151,.58);box-shadow:inset 0 0 0 3px rgba(255,255,255,.25);color:#fff;font-size:34px;font-weight:900;display:grid;place-items:center;touch-action:none;user-select:none}
+  .touchGroup{position:absolute;bottom:calc(20px + env(safe-area-inset-bottom));display:flex;gap:12px;pointer-events:auto}
+  .touchLeft{left:max(18px,env(safe-area-inset-left))}.touchRight{right:max(18px,env(safe-area-inset-right))}
+  .touchBtn{width:min(18vw,72px);height:min(18vw,72px);min-width:60px;min-height:60px;border:3px solid rgba(64,14,82,.9);border-radius:50%;background:rgba(124,55,151,.58);box-shadow:inset 0 0 0 3px rgba(255,255,255,.25);color:#fff;font-size:clamp(22px,6vw,34px);font-weight:900;display:grid;place-items:center;touch-action:none;user-select:none;cursor:pointer}
   .touchBtn.shoot{background:rgba(244,73,166,.65)}
-  @media (pointer:coarse),(max-width:900px){#touch{display:block}.uiBtn{width:48px;height:48px;font-size:22px}}
+  @media (pointer:coarse),(max-width:900px){
+    #touch{display:block}
+    .uiBtn{width:48px;height:48px;font-size:22px}
+    .panel{padding:22px 18px;border-radius:24px}
+    .panel h1{font-size:clamp(28px,8vw,42px)}
+    .panel p{font-size:15px}
+    .startBtn{padding:14px 18px;font-size:clamp(18px,5vw,22px);width:min(100%,320px)}
+    .keys{gap:8px}
+    .key{font-size:11px;padding:7px 8px}
+    .touchGroup{gap:10px;bottom:calc(18px + env(safe-area-inset-bottom))}
+  }
+  @media (max-width:480px){
+    .topButtons{gap:8px;top:max(10px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right))}
+    .uiBtn{width:44px;height:44px;border-width:3px;border-radius:12px;font-size:20px}
+    .touchLeft{left:12px}.touchRight{right:12px}
+    .touchBtn{min-width:54px;min-height:54px;width:64px;height:64px}
+  }
 </style>
 </head>
 <body>
