@@ -179,7 +179,8 @@ canvas {
   }
 }
 
-@media (orientation: landscape) and (max-width: 960px) {
+@media (orientation: landscape) and (max-width: 960px),
+       (orientation: landscape) and (pointer: coarse) {
   body {
     width: 100vw;
     height: 100dvh;
@@ -196,8 +197,8 @@ canvas {
   }
 
   .game-wrap {
-    width: min(100vw, 177.7778dvh);
-    height: min(100dvh, 56.25vw);
+    width: 100vw;
+    height: 100dvh;
     max-width: none;
   }
 
@@ -270,14 +271,38 @@ const ctx = canvas.getContext("2d");
 const touchButtons = document.querySelectorAll(".touch-btn");
 ctx.imageSmoothingEnabled = false;
 
-const W = canvas.width;
+const BASE_W = canvas.width;
 const H = canvas.height;
+let W = BASE_W;
+let game = null;
 const TAU = Math.PI * 2;
 
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const lerp = (a, b, t) => a + (b - a) * t;
 const rectsOverlap = (a, b) =>
   a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+
+function resizeCanvas() {
+  const displayWidth = canvas.clientWidth;
+  const displayHeight = canvas.clientHeight;
+  const isMobileLandscape = matchMedia("(orientation: landscape) and (max-width: 960px), (orientation: landscape) and (pointer: coarse)").matches;
+  W = isMobileLandscape && displayWidth > 0 && displayHeight > 0
+    ? H * displayWidth / displayHeight
+    : BASE_W;
+
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = Math.round(W * dpr);
+  canvas.height = Math.round(H * dpr);
+  ctx.setTransform(canvas.width / W, 0, 0, canvas.height / H, 0, 0);
+  ctx.imageSmoothingEnabled = false;
+
+  if (game) game.camera.x = clamp(game.camera.x, 0, game.worldWidth - W);
+}
+
+window.addEventListener("resize", resizeCanvas);
+window.addEventListener("orientationchange", () => requestAnimationFrame(resizeCanvas));
+if (window.visualViewport) window.visualViewport.addEventListener("resize", resizeCanvas);
+resizeCanvas();
 
 function seededRandom(seed) {
   let s = seed >>> 0;
@@ -1529,8 +1554,8 @@ class Game {
     canvas.addEventListener("pointerdown", e => {
       this.audio.ensure();
       const r = canvas.getBoundingClientRect();
-      const mx = (e.clientX - r.left) * W / r.width;
-      const my = (e.clientY - r.top) * H / r.height;
+      const mx = (e.clientX - r.left - canvas.clientLeft) * W / canvas.clientWidth;
+      const my = (e.clientY - r.top - canvas.clientTop) * H / canvas.clientHeight;
       if (mx >= W - 68 && mx <= W - 18 && my >= 12 && my <= 58) {
         this.togglePause();
         return;
@@ -1925,7 +1950,7 @@ class Game {
   }
 }
 
-const game = new Game();
+game = new Game();
 let last = performance.now();
 function loop(now) {
   const dt = (now - last) / 1000;
